@@ -1,0 +1,733 @@
+﻿$PBExportHeader$m_auswertung_wf1.srm
+$PBExportComments$Menü für Auswertungen WF1
+forward
+global type m_auswertung_wf1 from menu
+end type
+type m_file from menu within m_auswertung_wf1
+end type
+type m_zeitraum from menu within m_file
+end type
+type m_kst from menu within m_file
+end type
+type m_umlage from menu within m_file
+end type
+type m_bezug from menu within m_file
+end type
+type m_dash1 from menu within m_file
+end type
+type m_kriterienkopf from menu within m_file
+end type
+type m_dash2 from menu within m_file
+end type
+type m_drucken from menu within m_file
+end type
+type m_druckereinrichten from menu within m_file
+end type
+type m_dash3 from menu within m_file
+end type
+type m_close from menu within m_file
+end type
+type m_file from menu within m_auswertung_wf1
+m_zeitraum m_zeitraum
+m_kst m_kst
+m_umlage m_umlage
+m_bezug m_bezug
+m_dash1 m_dash1
+m_kriterienkopf m_kriterienkopf
+m_dash2 m_dash2
+m_drucken m_drucken
+m_druckereinrichten m_druckereinrichten
+m_dash3 m_dash3
+m_close m_close
+end type
+type m_hilfe from menu within m_auswertung_wf1
+end type
+type m_about from menu within m_hilfe
+end type
+type m_hilfe from menu within m_auswertung_wf1
+m_about m_about
+end type
+global type m_auswertung_wf1 from menu
+m_file m_file
+m_hilfe m_hilfe
+end type
+end forward
+
+global type m_auswertung_wf1 from menu
+m_file m_file
+m_hilfe m_hilfe
+end type
+global m_auswertung_wf1 m_auswertung_wf1
+
+forward prototypes
+public subroutine of_checkrights ()
+end prototypes
+
+public subroutine of_checkrights ();
+w_auswertung_wf1 lw_auswertung
+
+
+lw_auswertung = ParentWindow
+
+m_file.m_zeitraum.enabled = left (lw_auswertung.dw_auswertung.DataObject, 17) <> 'd_auswahl_projekt'
+
+m_file.m_kst.visible = (lw_auswertung.dw_auswertung.dataobject = "d_auswert_stunden_wf1") OR &
+								(lw_auswertung.dw_auswertung.dataobject = "d_auswert_prozent_wf1")
+m_file.m_kst.toolbaritemvisible = m_file.m_kst.visible
+
+m_file.m_umlage.visible = (lw_auswertung.dw_auswertung.dataobject = "d_auswert_stunden_wf1") OR &
+								(lw_auswertung.dw_auswertung.dataobject = "d_auswert_prozent_wf1")
+m_file.m_umlage.toolbaritemvisible = m_file.m_umlage.visible
+
+m_file.m_bezug.visible = lw_auswertung.dw_auswertung.dataobject = "d_auswert_prozent_wf1"
+m_file.m_bezug.toolbaritemvisible = m_file.m_bezug.visible
+
+m_file.m_kriterienkopf.visible = (lw_auswertung.dw_auswertung.dataobject = "d_auswert_stunden_wf1") OR &
+										(lw_auswertung.dw_auswertung.dataobject = "d_auswert_prozent_wf1")
+
+m_file.m_dash2.visible = m_file.m_kriterienkopf.visible
+
+end subroutine
+
+on m_auswertung_wf1.create
+m_auswertung_wf1=this
+call super::create
+this.text = "m_auswertung_wf1"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+this.m_file=create m_file
+this.m_hilfe=create m_hilfe
+this.Item[UpperBound(this.Item)+1]=this.m_file
+this.Item[UpperBound(this.Item)+1]=this.m_hilfe
+end on
+
+on m_auswertung_wf1.destroy
+call super::destroy
+destroy(this.m_file)
+destroy(this.m_hilfe)
+end on
+
+type m_file from menu within m_auswertung_wf1
+m_zeitraum m_zeitraum
+m_kst m_kst
+m_umlage m_umlage
+m_bezug m_bezug
+m_dash1 m_dash1
+m_kriterienkopf m_kriterienkopf
+m_dash2 m_dash2
+m_drucken m_drucken
+m_druckereinrichten m_druckereinrichten
+m_dash3 m_dash3
+m_close m_close
+end type
+
+on m_file.create
+call super::create
+this.text = "Aus&wertung"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+this.m_zeitraum=create m_zeitraum
+this.m_kst=create m_kst
+this.m_umlage=create m_umlage
+this.m_bezug=create m_bezug
+this.m_dash1=create m_dash1
+this.m_kriterienkopf=create m_kriterienkopf
+this.m_dash2=create m_dash2
+this.m_drucken=create m_drucken
+this.m_druckereinrichten=create m_druckereinrichten
+this.m_dash3=create m_dash3
+this.m_close=create m_close
+this.Item[UpperBound(this.Item)+1]=this.m_zeitraum
+this.Item[UpperBound(this.Item)+1]=this.m_kst
+this.Item[UpperBound(this.Item)+1]=this.m_umlage
+this.Item[UpperBound(this.Item)+1]=this.m_bezug
+this.Item[UpperBound(this.Item)+1]=this.m_dash1
+this.Item[UpperBound(this.Item)+1]=this.m_kriterienkopf
+this.Item[UpperBound(this.Item)+1]=this.m_dash2
+this.Item[UpperBound(this.Item)+1]=this.m_drucken
+this.Item[UpperBound(this.Item)+1]=this.m_druckereinrichten
+this.Item[UpperBound(this.Item)+1]=this.m_dash3
+this.Item[UpperBound(this.Item)+1]=this.m_close
+end on
+
+on m_file.destroy
+call super::destroy
+destroy(this.m_zeitraum)
+destroy(this.m_kst)
+destroy(this.m_umlage)
+destroy(this.m_bezug)
+destroy(this.m_dash1)
+destroy(this.m_kriterienkopf)
+destroy(this.m_dash2)
+destroy(this.m_drucken)
+destroy(this.m_druckereinrichten)
+destroy(this.m_dash3)
+destroy(this.m_close)
+end on
+
+type m_zeitraum from menu within m_file
+event clicked ( )
+end type
+
+event clicked;
+w_auswertung_wf1 lw_auswertung
+
+lw_auswertung = ParentWindow
+
+IF lw_auswertung.ib_loading THEN return
+
+// aktuellen Zeitraum ermitteln
+// und neuen Zeitraum auswählen
+OpenWithParm (w_auswahl_zeitraum_wf1, lw_auswertung.inv_attrib)
+
+IF NOT IsValid (Message.PowerObjectParm) THEN return
+
+lw_auswertung.inv_attrib = Message.PowerObjectParm
+
+// Daten mit neuer Auswahl laden
+lw_auswertung.post of_retrieve ()
+
+end event
+
+on m_zeitraum.create
+call super::create
+this.text = "Anderer &Zeitraum..."
+this.toolbaritemname = "monthcalendar!"
+this.toolbaritemtext = "Zeitraum"
+this.toolbaritemorder = 3
+this.menuimage = "MonthCalendar!"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_zeitraum.destroy
+call super::destroy
+end on
+
+type m_kst from menu within m_file
+event clicked ( )
+event create ( )
+event destroy ( )
+end type
+
+event clicked;
+w_auswertung_wf1 lw_auswertung
+
+lw_auswertung = ParentWindow
+
+IF lw_auswertung.ib_loading THEN return
+
+// aktuelle Daten ermitteln
+// und neue KST auswählen
+lw_auswertung.inv_attrib.ib_bezug = FALSE
+OpenWithParm (w_auswahl_kst_wf1, lw_auswertung.inv_attrib)
+
+IF NOT IsValid (Message.PowerObjectParm) THEN return
+lw_auswertung.inv_attrib = Message.PowerObjectParm
+
+// Daten mit neuer Auswahl laden
+lw_auswertung.post of_retrieve ()
+
+end event
+
+on m_kst.create
+call super::create
+this.text = "Andere &Kostenstelle..."
+this.toolbaritemname = "updatereturn!"
+this.toolbaritemtext = "Kostenstelle"
+this.toolbaritemorder = 4
+this.menuimage = "updatereturn!"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_kst.destroy
+call super::destroy
+end on
+
+type m_umlage from menu within m_file
+end type
+
+on m_umlage.create
+call super::create
+this.text = "Andere &Tätigkeit..."
+this.toolbaritemname = "custom096!"
+this.toolbaritemtext = "Tätigkeit"
+this.toolbaritemorder = 5
+this.menuimage = "Custom096!"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_umlage.destroy
+call super::destroy
+end on
+
+event clicked;
+w_auswertung_wf1 lw_auswertung
+
+lw_auswertung = ParentWindow
+
+IF lw_auswertung.ib_loading THEN return
+
+// aktuelle Daten ermitteln
+// und neue KST auswählen
+OpenWithParm (w_auswahl_umlage_wf1, lw_auswertung.inv_attrib)
+
+IF NOT IsValid (Message.PowerObjectParm) THEN return
+lw_auswertung.inv_attrib = Message.PowerObjectParm
+
+// Daten mit neuer Auswahl laden
+lw_auswertung.post of_retrieve ()
+
+end event
+
+type m_bezug from menu within m_file
+end type
+
+on m_bezug.create
+call super::create
+this.text = "Andere &Bezugsgröße..."
+this.toolbaritemname = "crosstab!"
+this.toolbaritemtext = "Bezug"
+this.toolbaritemorder = 6
+this.menuimage = "CrossTab!"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_bezug.destroy
+call super::destroy
+end on
+
+event clicked;
+w_auswertung_wf1 lw_auswertung
+
+lw_auswertung = ParentWindow
+
+IF lw_auswertung.ib_loading THEN return
+
+// aktuelle Daten ermitteln
+// und neue KST auswählen
+lw_auswertung.inv_attrib.ib_bezug = TRUE
+OpenWithParm (w_auswahl_kst_wf1, lw_auswertung.inv_attrib)
+
+IF NOT IsValid (Message.PowerObjectParm) THEN return
+lw_auswertung.inv_attrib = Message.PowerObjectParm
+
+// Daten mit neuer Auswahl laden
+lw_auswertung.post of_retrieve ()
+
+end event
+
+type m_dash1 from menu within m_file
+end type
+
+on m_dash1.create
+call super::create
+this.text = "-"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_dash1.destroy
+call super::destroy
+end on
+
+type m_kriterienkopf from menu within m_file
+end type
+
+on m_kriterienkopf.create
+call super::create
+this.text = "Kriterien im &Auswertungskopf"
+this.checked = true
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_kriterienkopf.destroy
+call super::destroy
+end on
+
+event clicked;
+w_auswertung_wf1 lw_auswertung
+
+lw_auswertung = ParentWindow
+IF lw_auswertung.ib_loading THEN return
+
+this.checked = NOT this.checked
+
+lw_auswertung.post of_retrieve ()
+
+end event
+
+type m_dash2 from menu within m_file
+end type
+
+on m_dash2.create
+call super::create
+this.text = "-"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_dash2.destroy
+call super::destroy
+end on
+
+type m_drucken from menu within m_file
+end type
+
+on m_drucken.create
+call super::create
+this.text = "&Drucken...~tCtrl+P"
+this.shortcut = 336
+this.toolbaritemname = "print!"
+this.toolbaritemtext = "Drucken"
+this.toolbaritemorder = 20
+this.toolbaritemspace = 1
+this.menuimage = "print!"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_drucken.destroy
+call super::destroy
+end on
+
+event clicked;w_auswertung_wf1 lw_auswertung
+
+lw_auswertung = ParentWindow
+
+IF lw_auswertung.ib_loading THEN return
+
+lw_auswertung.dw_auswertung.Event pfc_print()
+
+end event
+
+type m_druckereinrichten from menu within m_file
+end type
+
+event clicked;printSetup()
+end event
+
+on m_druckereinrichten.create
+call super::create
+this.text = "Drucker &einrichten..."
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_druckereinrichten.destroy
+call super::destroy
+end on
+
+type m_dash3 from menu within m_file
+event create ( )
+event destroy ( )
+end type
+
+on m_dash3.create
+call super::create
+this.text = "-"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_dash3.destroy
+call super::destroy
+end on
+
+type m_close from menu within m_file
+event clicked ( )
+end type
+
+event clicked;//*-----------------------------------------------------------------*/
+//*    clicked:  Close Main Window
+//*-----------------------------------------------------------------*/
+Close ( ParentWindow )
+end event
+
+on m_close.create
+call super::create
+this.text = "S&chließen"
+this.toolbaritemname = "exit!"
+this.toolbaritemtext = "Ende"
+this.toolbaritemorder = 100
+this.toolbaritemspace = 1
+this.menuitemtype = menuitemtypeexit!
+this.menuimage = "exit!"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_close.destroy
+call super::destroy
+end on
+
+type m_hilfe from menu within m_auswertung_wf1
+m_about m_about
+end type
+
+on m_hilfe.create
+call super::create
+this.text = "&Hilfe"
+this.shifttoright = true
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+this.m_about=create m_about
+this.Item[UpperBound(this.Item)+1]=this.m_about
+end on
+
+on m_hilfe.destroy
+call super::destroy
+destroy(this.m_about)
+end on
+
+type m_about from menu within m_hilfe
+event clicked ( )
+end type
+
+event clicked;//*-----------------------------------------------------------------*/
+//*    clicked:   Invoke copyright response window 
+//*-----------------------------------------------------------------*/
+Open ( w_about )
+end event
+
+on m_about.create
+call super::create
+this.text = "&Über..."
+this.menuitemtype = menuitemtypeabout!
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_about.destroy
+call super::destroy
+end on
+

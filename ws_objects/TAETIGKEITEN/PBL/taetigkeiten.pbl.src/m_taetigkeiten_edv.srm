@@ -1,0 +1,1876 @@
+﻿$PBExportHeader$m_taetigkeiten_edv.srm
+$PBExportComments$Main-Menü EDV
+forward
+global type m_taetigkeiten_edv from menu
+end type
+type m_file from menu within m_taetigkeiten_edv
+end type
+type m_dummyuser from menu within m_file
+end type
+type m_dash0 from menu within m_file
+end type
+type m_auswertung from menu within m_file
+end type
+type m_vollstaendigkeit from menu within m_auswertung
+end type
+type m_2 from menu within m_auswertung
+end type
+type m_edvgesamt from menu within m_auswertung
+end type
+type m_abteilung from menu within m_auswertung
+end type
+type m_selbst from menu within m_auswertung
+end type
+type m_6 from menu within m_auswertung
+end type
+type m_abtleiter from menu within m_auswertung
+end type
+type m_gesamt from menu within m_auswertung
+end type
+type m_export_sap from menu within m_auswertung
+end type
+type m_externemitarbeiter from menu within m_auswertung
+end type
+type m_plan_ist from menu within m_auswertung
+end type
+type m_7 from menu within m_auswertung
+end type
+type m_kostenstellen from menu within m_auswertung
+end type
+type m_vor_ort_kontrollen from menu within m_auswertung
+end type
+type m_10 from menu within m_auswertung
+end type
+type m_projekt_zeit from menu within m_auswertung
+end type
+type m_projekt_phase from menu within m_auswertung
+end type
+type m_11 from menu within m_auswertung
+end type
+type m_jiratickets from menu within m_auswertung
+end type
+type m_3 from menu within m_auswertung
+end type
+type m_tabsystems from menu within m_auswertung
+end type
+type m_ts_gesamt from menu within m_tabsystems
+end type
+type m_ts_mitarbeiter from menu within m_tabsystems
+end type
+type m_111 from menu within m_tabsystems
+end type
+type m_ts_projekt_zeit from menu within m_tabsystems
+end type
+type m_ts_projekt_phase from menu within m_tabsystems
+end type
+type m_tabsystems from menu within m_auswertung
+m_ts_gesamt m_ts_gesamt
+m_ts_mitarbeiter m_ts_mitarbeiter
+m_111 m_111
+m_ts_projekt_zeit m_ts_projekt_zeit
+m_ts_projekt_phase m_ts_projekt_phase
+end type
+type m_auswertung from menu within m_file
+m_vollstaendigkeit m_vollstaendigkeit
+m_2 m_2
+m_edvgesamt m_edvgesamt
+m_abteilung m_abteilung
+m_selbst m_selbst
+m_6 m_6
+m_abtleiter m_abtleiter
+m_gesamt m_gesamt
+m_export_sap m_export_sap
+m_externemitarbeiter m_externemitarbeiter
+m_plan_ist m_plan_ist
+m_7 m_7
+m_kostenstellen m_kostenstellen
+m_vor_ort_kontrollen m_vor_ort_kontrollen
+m_10 m_10
+m_projekt_zeit m_projekt_zeit
+m_projekt_phase m_projekt_phase
+m_11 m_11
+m_jiratickets m_jiratickets
+m_3 m_3
+m_tabsystems m_tabsystems
+end type
+type m_1 from menu within m_file
+end type
+type m_export from menu within m_file
+end type
+type m_0 from menu within m_file
+end type
+type m_print from menu within m_file
+end type
+type m_printersetup from menu within m_file
+end type
+type m_dash1 from menu within m_file
+end type
+type m_exit from menu within m_file
+end type
+type m_file from menu within m_taetigkeiten_edv
+m_dummyuser m_dummyuser
+m_dash0 m_dash0
+m_auswertung m_auswertung
+m_1 m_1
+m_export m_export
+m_0 m_0
+m_print m_print
+m_printersetup m_printersetup
+m_dash1 m_dash1
+m_exit m_exit
+end type
+type m_help from menu within m_taetigkeiten_edv
+end type
+type m_aboutquickapp from menu within m_help
+end type
+type m_help from menu within m_taetigkeiten_edv
+m_aboutquickapp m_aboutquickapp
+end type
+global type m_taetigkeiten_edv from menu
+m_file m_file
+m_help m_help
+end type
+end forward
+
+global type m_taetigkeiten_edv from menu
+m_file m_file
+m_help m_help
+end type
+global m_taetigkeiten_edv m_taetigkeiten_edv
+
+forward prototypes
+public subroutine of_checkrights ()
+end prototypes
+
+public subroutine of_checkrights ();
+long ll_count
+
+
+// Erfassung Zeiten für Dummy-User
+SELECT COUNT (*)
+INTO :ll_count
+FROM intdba.org_recht
+WHERE org_recht.username = :gs_username
+AND org_recht.art = 'TK_ERFUSER'
+AND org_recht.recht = 'dummy'
+USING SQLCA;
+
+m_file.m_dummyuser.enabled = (ll_count > 0)
+
+
+// Auswertung Abteilung und Plan/Ist
+SELECT COUNT (*)
+INTO :ll_count
+FROM intdba.org_recht
+WHERE username = :gs_username
+AND art = 'TK_KST'
+USING SQLCA;
+
+m_file.m_auswertung.m_abtleiter.enabled = (ll_count > 0)
+m_file.m_auswertung.m_plan_ist.enabled = (ll_count > 0)
+
+
+// Auswertung Gesamtbank
+SELECT COUNT (*)
+INTO :ll_count
+FROM intdba.org_recht
+WHERE username = :gs_username
+AND art = 'TK_AUSW'
+AND recht = 'CO'
+USING SQLCA;
+
+m_file.m_auswertung.m_gesamt.enabled = (ll_count > 0)
+m_file.m_auswertung.m_export_sap.enabled = (ll_count > 0)
+//m_file.m_auswertung.m_vor_ort_kontrollen.enabled = (ll_count > 0)
+
+
+// Auswertung externe MA
+SELECT COUNT (*)
+INTO :ll_count
+FROM intdba.org_recht
+WHERE username = :gs_username
+AND art = 'TK_AUSW'
+AND recht = 'ausw_ext'
+USING SQLCA;
+
+m_file.m_auswertung.m_externemitarbeiter.enabled = (ll_count > 0)
+
+
+// Auswertung Kostenstellen
+SELECT COUNT (*)
+INTO :ll_count
+FROM intdba.org_recht
+WHERE username = :gs_username
+AND art = 'TK_AUSW'
+AND recht = 'KST'
+USING SQLCA;
+
+m_file.m_auswertung.m_kostenstellen.enabled = (ll_count > 0)
+
+
+// Auswertung TAB-Systems
+SELECT COUNT (*)
+INTO :ll_count
+FROM intdba.org_recht
+WHERE username = :gs_username
+AND art = 'TS'
+AND recht = 'TS'
+USING SQLCA;
+
+m_file.m_auswertung.m_tabsystems.m_ts_mitarbeiter.enabled = (ll_count > 0)
+
+
+end subroutine
+
+on m_taetigkeiten_edv.create
+m_taetigkeiten_edv=this
+call super::create
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+this.m_file=create m_file
+this.m_help=create m_help
+this.Item[UpperBound(this.Item)+1]=this.m_file
+this.Item[UpperBound(this.Item)+1]=this.m_help
+end on
+
+on m_taetigkeiten_edv.destroy
+call super::destroy
+destroy(this.m_file)
+destroy(this.m_help)
+end on
+
+type m_file from menu within m_taetigkeiten_edv
+m_dummyuser m_dummyuser
+m_dash0 m_dash0
+m_auswertung m_auswertung
+m_1 m_1
+m_export m_export
+m_0 m_0
+m_print m_print
+m_printersetup m_printersetup
+m_dash1 m_dash1
+m_exit m_exit
+end type
+
+on m_file.create
+call super::create
+this.text = "&Datei"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+this.m_dummyuser=create m_dummyuser
+this.m_dash0=create m_dash0
+this.m_auswertung=create m_auswertung
+this.m_1=create m_1
+this.m_export=create m_export
+this.m_0=create m_0
+this.m_print=create m_print
+this.m_printersetup=create m_printersetup
+this.m_dash1=create m_dash1
+this.m_exit=create m_exit
+this.Item[UpperBound(this.Item)+1]=this.m_dummyuser
+this.Item[UpperBound(this.Item)+1]=this.m_dash0
+this.Item[UpperBound(this.Item)+1]=this.m_auswertung
+this.Item[UpperBound(this.Item)+1]=this.m_1
+this.Item[UpperBound(this.Item)+1]=this.m_export
+this.Item[UpperBound(this.Item)+1]=this.m_0
+this.Item[UpperBound(this.Item)+1]=this.m_print
+this.Item[UpperBound(this.Item)+1]=this.m_printersetup
+this.Item[UpperBound(this.Item)+1]=this.m_dash1
+this.Item[UpperBound(this.Item)+1]=this.m_exit
+end on
+
+on m_file.destroy
+call super::destroy
+destroy(this.m_dummyuser)
+destroy(this.m_dash0)
+destroy(this.m_auswertung)
+destroy(this.m_1)
+destroy(this.m_export)
+destroy(this.m_0)
+destroy(this.m_print)
+destroy(this.m_printersetup)
+destroy(this.m_dash1)
+destroy(this.m_exit)
+end on
+
+type m_dummyuser from menu within m_file
+end type
+
+on m_dummyuser.create
+call super::create
+this.text = "&Zeiten für Dummy-User erfassen..."
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_dummyuser.destroy
+call super::destroy
+end on
+
+event clicked;
+OpenWithParm (w_taetigkeiten_edv, "dummy")
+
+end event
+
+type m_dash0 from menu within m_file
+end type
+
+on m_dash0.create
+call super::create
+this.text = "-"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_dash0.destroy
+call super::destroy
+end on
+
+type m_auswertung from menu within m_file
+m_vollstaendigkeit m_vollstaendigkeit
+m_2 m_2
+m_edvgesamt m_edvgesamt
+m_abteilung m_abteilung
+m_selbst m_selbst
+m_6 m_6
+m_abtleiter m_abtleiter
+m_gesamt m_gesamt
+m_export_sap m_export_sap
+m_externemitarbeiter m_externemitarbeiter
+m_plan_ist m_plan_ist
+m_7 m_7
+m_kostenstellen m_kostenstellen
+m_vor_ort_kontrollen m_vor_ort_kontrollen
+m_10 m_10
+m_projekt_zeit m_projekt_zeit
+m_projekt_phase m_projekt_phase
+m_11 m_11
+m_jiratickets m_jiratickets
+m_3 m_3
+m_tabsystems m_tabsystems
+end type
+
+on m_auswertung.create
+call super::create
+this.text = "&Auswertung"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+this.m_vollstaendigkeit=create m_vollstaendigkeit
+this.m_2=create m_2
+this.m_edvgesamt=create m_edvgesamt
+this.m_abteilung=create m_abteilung
+this.m_selbst=create m_selbst
+this.m_6=create m_6
+this.m_abtleiter=create m_abtleiter
+this.m_gesamt=create m_gesamt
+this.m_export_sap=create m_export_sap
+this.m_externemitarbeiter=create m_externemitarbeiter
+this.m_plan_ist=create m_plan_ist
+this.m_7=create m_7
+this.m_kostenstellen=create m_kostenstellen
+this.m_vor_ort_kontrollen=create m_vor_ort_kontrollen
+this.m_10=create m_10
+this.m_projekt_zeit=create m_projekt_zeit
+this.m_projekt_phase=create m_projekt_phase
+this.m_11=create m_11
+this.m_jiratickets=create m_jiratickets
+this.m_3=create m_3
+this.m_tabsystems=create m_tabsystems
+this.Item[UpperBound(this.Item)+1]=this.m_vollstaendigkeit
+this.Item[UpperBound(this.Item)+1]=this.m_2
+this.Item[UpperBound(this.Item)+1]=this.m_edvgesamt
+this.Item[UpperBound(this.Item)+1]=this.m_abteilung
+this.Item[UpperBound(this.Item)+1]=this.m_selbst
+this.Item[UpperBound(this.Item)+1]=this.m_6
+this.Item[UpperBound(this.Item)+1]=this.m_abtleiter
+this.Item[UpperBound(this.Item)+1]=this.m_gesamt
+this.Item[UpperBound(this.Item)+1]=this.m_export_sap
+this.Item[UpperBound(this.Item)+1]=this.m_externemitarbeiter
+this.Item[UpperBound(this.Item)+1]=this.m_plan_ist
+this.Item[UpperBound(this.Item)+1]=this.m_7
+this.Item[UpperBound(this.Item)+1]=this.m_kostenstellen
+this.Item[UpperBound(this.Item)+1]=this.m_vor_ort_kontrollen
+this.Item[UpperBound(this.Item)+1]=this.m_10
+this.Item[UpperBound(this.Item)+1]=this.m_projekt_zeit
+this.Item[UpperBound(this.Item)+1]=this.m_projekt_phase
+this.Item[UpperBound(this.Item)+1]=this.m_11
+this.Item[UpperBound(this.Item)+1]=this.m_jiratickets
+this.Item[UpperBound(this.Item)+1]=this.m_3
+this.Item[UpperBound(this.Item)+1]=this.m_tabsystems
+end on
+
+on m_auswertung.destroy
+call super::destroy
+destroy(this.m_vollstaendigkeit)
+destroy(this.m_2)
+destroy(this.m_edvgesamt)
+destroy(this.m_abteilung)
+destroy(this.m_selbst)
+destroy(this.m_6)
+destroy(this.m_abtleiter)
+destroy(this.m_gesamt)
+destroy(this.m_export_sap)
+destroy(this.m_externemitarbeiter)
+destroy(this.m_plan_ist)
+destroy(this.m_7)
+destroy(this.m_kostenstellen)
+destroy(this.m_vor_ort_kontrollen)
+destroy(this.m_10)
+destroy(this.m_projekt_zeit)
+destroy(this.m_projekt_phase)
+destroy(this.m_11)
+destroy(this.m_jiratickets)
+destroy(this.m_3)
+destroy(this.m_tabsystems)
+end on
+
+type m_vollstaendigkeit from menu within m_auswertung
+event create ( )
+event destroy ( )
+end type
+
+on m_vollstaendigkeit.create
+call super::create
+this.text = "&Vollständigkeit...~tCtrl+0"
+this.shortcut = 304
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_vollstaendigkeit.destroy
+call super::destroy
+end on
+
+event clicked;w_auswertung_edv lw_auswertung
+w_taetigkeiten_basis lw_parent
+s_auswert lstr_auswert
+
+lw_parent = ParentWindow
+lstr_auswert.is_title = "Auswertung Vollständigkeit"
+lstr_auswert.is_datawindow = 'd_plausi_username'
+lw_parent.of_GetZeitraum (lstr_auswert.id_von, lstr_auswert.id_bis)
+
+OpenWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+type m_2 from menu within m_auswertung
+event create ( )
+event destroy ( )
+end type
+
+on m_2.create
+call super::create
+this.text = "-"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_2.destroy
+call super::destroy
+end on
+
+type m_edvgesamt from menu within m_auswertung
+event clicked ( )
+end type
+
+event clicked;w_auswertung_edv lw_auswertung
+w_taetigkeiten_basis lw_parent
+s_auswert lstr_auswert
+
+lw_parent = ParentWindow
+lstr_auswert.is_title = "Auswertung Gesamt"
+lstr_auswert.is_datawindow = 'd_auswert_gesamt'
+lw_parent.of_GetZeitraum (lstr_auswert.id_von, lstr_auswert.id_bis)
+lstr_auswert.is_username = '%'
+
+OpenWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+on m_edvgesamt.create
+call super::create
+this.text = "I&T gesamt...~tCtrl+1"
+this.shortcut = 305
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_edvgesamt.destroy
+call super::destroy
+end on
+
+type m_abteilung from menu within m_auswertung
+event clicked ( )
+end type
+
+event clicked;w_auswertung_edv lw_auswertung
+w_taetigkeiten_basis lw_parent
+s_auswert lstr_auswert
+
+lw_parent = ParentWindow
+lstr_auswert.is_title = "Auswertung Eigene Abteilung"
+lstr_auswert.is_datawindow = 'd_auswert_gruppe'
+lw_parent.of_GetZeitraum (lstr_auswert.id_von, lstr_auswert.id_bis)
+lstr_auswert.is_username = gs_username
+
+OpenWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+on m_abteilung.create
+call super::create
+this.text = "Eigene A&bteilung...~tCtrl+2"
+this.shortcut = 306
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_abteilung.destroy
+call super::destroy
+end on
+
+type m_selbst from menu within m_auswertung
+event clicked ( )
+end type
+
+event clicked;w_auswertung_edv lw_auswertung
+w_taetigkeiten_basis lw_parent
+s_auswert lstr_auswert
+
+lw_parent = ParentWindow
+lstr_auswert.is_title = "Auswertung Eigene Daten"
+lstr_auswert.is_datawindow = 'd_auswert_gesamt'
+lw_parent.of_GetZeitraum (lstr_auswert.id_von, lstr_auswert.id_bis)
+lstr_auswert.is_username = gs_username
+
+OpenWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+on m_selbst.create
+call super::create
+this.text = "E&igene...~tCtrl+3"
+this.shortcut = 307
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_selbst.destroy
+call super::destroy
+end on
+
+type m_6 from menu within m_auswertung
+end type
+
+on m_6.create
+call super::create
+this.text = "-"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_6.destroy
+call super::destroy
+end on
+
+type m_abtleiter from menu within m_auswertung
+event clicked ( )
+end type
+
+event clicked;w_auswertung_edv lw_auswertung
+w_taetigkeiten_basis lw_parent
+s_auswert lstr_auswert
+
+lw_parent = ParentWindow
+lstr_auswert.is_title = "Auswertung Abteilungsleiter"
+lstr_auswert.is_datawindow = 'd_auswert_gruppenleiter'
+lw_parent.of_GetZeitraum (lstr_auswert.id_von, lstr_auswert.id_bis)
+lstr_auswert.is_username = gs_username
+
+OpenWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+on m_abtleiter.create
+call super::create
+this.text = "Abteilungs&leiter...~tCtrl+4"
+this.shortcut = 308
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_abtleiter.destroy
+call super::destroy
+end on
+
+type m_gesamt from menu within m_auswertung
+event clicked ( )
+end type
+
+event clicked;w_auswertung_edv lw_auswertung
+w_taetigkeiten_basis lw_parent
+s_auswert lstr_auswert
+
+lw_parent = ParentWindow
+lstr_auswert.is_title = "Auswertung Alle Abteilungen"
+lstr_auswert.is_datawindow = 'd_auswert_alle'
+lw_parent.of_GetZeitraum (lstr_auswert.id_von, lstr_auswert.id_bis)
+lstr_auswert.is_username = gs_username
+
+OpenWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+on m_gesamt.create
+call super::create
+this.text = "&Gesamtbank...~tCtrl+5"
+this.shortcut = 309
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_gesamt.destroy
+call super::destroy
+end on
+
+type m_export_sap from menu within m_auswertung
+end type
+
+event clicked;w_auswertung_edv lw_auswertung
+w_taetigkeiten_basis lw_parent
+s_auswert lstr_auswert
+
+lw_parent = ParentWindow
+lstr_auswert.is_title = "Auswertung Alle Abteilungen (Export nach SAP)"
+lstr_auswert.is_datawindow = 'd_auswert_alle_export_sap'
+lw_parent.of_GetZeitraum (lstr_auswert.id_von, lstr_auswert.id_bis)
+lstr_auswert.is_username = gs_username
+
+OpenWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+on m_export_sap.create
+call super::create
+this.text = "E&xport für SAP..."
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_export_sap.destroy
+call super::destroy
+end on
+
+type m_externemitarbeiter from menu within m_auswertung
+end type
+
+event clicked;w_auswertung_edv lw_auswertung
+w_taetigkeiten_basis lw_parent
+s_auswert lstr_auswert
+
+lw_parent = ParentWindow
+lstr_auswert.is_title = "Auswertung Externe Mitarbeiter"
+lstr_auswert.is_datawindow = 'd_auswert_extern'
+lw_parent.of_GetZeitraum (lstr_auswert.id_von, lstr_auswert.id_bis)
+lstr_auswert.is_username = gs_username
+
+OpenWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+on m_externemitarbeiter.create
+call super::create
+this.text = "&externe Mitarbeiter..."
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_externemitarbeiter.destroy
+call super::destroy
+end on
+
+type m_plan_ist from menu within m_auswertung
+event clicked ( )
+end type
+
+event clicked;w_auswertung_edv lw_auswertung
+w_taetigkeiten_basis lw_parent
+s_auswert lstr_auswert
+
+lw_parent = ParentWindow
+lstr_auswert.is_title = "Auswertung Plan / Ist"
+lstr_auswert.is_datawindow = 'd_auswert_plan_ist'
+lw_parent.of_GetZeitraum (lstr_auswert.id_von, lstr_auswert.id_bis)
+lstr_auswert.is_username = gs_username
+
+OpenWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+on m_plan_ist.create
+call super::create
+this.text = "Pla&n / Ist - Vergleich...~tCtrl+6"
+this.shortcut = 310
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_plan_ist.destroy
+call super::destroy
+end on
+
+type m_7 from menu within m_auswertung
+end type
+
+on m_7.create
+call super::create
+this.text = "-"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_7.destroy
+call super::destroy
+end on
+
+type m_kostenstellen from menu within m_auswertung
+end type
+
+on m_kostenstellen.create
+call super::create
+this.text = "&Kostenstellen/Umlagen...~tCtrl+K"
+this.shortcut = 331
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_kostenstellen.destroy
+call super::destroy
+end on
+
+event clicked;w_auswertung_edv lw_auswertung
+w_taetigkeiten_basis lw_parent
+s_auswert lstr_auswert
+
+lw_parent = ParentWindow
+lstr_auswert.is_title = "Auswertung Kostenstellen"
+lstr_auswert.is_datawindow = 'd_auswert_kst'
+lw_parent.of_GetZeitraum (lstr_auswert.id_von, lstr_auswert.id_bis)
+lstr_auswert.is_username = gs_username
+lstr_auswert.is_kst = "%"
+
+OpenWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+type m_vor_ort_kontrollen from menu within m_auswertung
+end type
+
+on m_vor_ort_kontrollen.create
+call super::create
+this.text = "Vor-&Ort-Kontrollen...~tCtrl+O"
+this.enabled = false
+this.shortcut = 335
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_vor_ort_kontrollen.destroy
+call super::destroy
+end on
+
+event clicked;
+MessageBox ("Hinweis", "Auf Wunsch der WF Zuschuss nicht mehr verfügbar ...")
+return
+
+w_auswertung_edv lw_auswertung
+w_taetigkeiten_basis lw_parent
+s_auswert lstr_auswert
+
+lw_parent = ParentWindow
+lstr_auswert.is_title = "Auswertung Vor-Ort-Kontrollen"
+lstr_auswert.is_datawindow = 'd_auswert_vorort'
+lw_parent.of_GetZeitraum (lstr_auswert.id_von, lstr_auswert.id_bis)
+lstr_auswert.is_username = gs_username
+
+OpenWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+type m_10 from menu within m_auswertung
+end type
+
+on m_10.create
+call super::create
+this.text = "-"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_10.destroy
+call super::destroy
+end on
+
+type m_projekt_zeit from menu within m_auswertung
+event clicked ( )
+end type
+
+event clicked;w_auswertung_edv lw_auswertung
+s_auswert lstr_auswert
+
+lstr_auswert.is_title = "Auswertung Projekt nach Zeitrahmen"
+lstr_auswert.is_tag = 'd_auswert_projekt'
+lstr_auswert.is_datawindow = 'd_auswahl_projekt'
+lstr_auswert.is_username = gs_username
+lstr_auswert.id_von = 1900-01-01
+lstr_auswert.id_bis = 2100-12-31
+
+openWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+on m_projekt_zeit.create
+call super::create
+this.text = "Projekt nach &Zeitraum...~tCtrl+7"
+this.shortcut = 311
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_projekt_zeit.destroy
+call super::destroy
+end on
+
+type m_projekt_phase from menu within m_auswertung
+event clicked ( )
+end type
+
+event clicked;w_auswertung_edv lw_auswertung
+s_auswert lstr_auswert
+
+lstr_auswert.is_title = "Auswertung Projekt nach Phasen"
+lstr_auswert.is_tag = 'd_auswert_projekt_phase'
+lstr_auswert.is_datawindow = 'd_auswahl_projekt'
+lstr_auswert.is_username = gs_username
+lstr_auswert.id_von = 1900-01-01
+lstr_auswert.id_bis = 2100-12-31
+
+openWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+on m_projekt_phase.create
+call super::create
+this.text = "Projekt nach P&hasen...~tCtrl+8"
+this.shortcut = 312
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_projekt_phase.destroy
+call super::destroy
+end on
+
+type m_11 from menu within m_auswertung
+end type
+
+on m_11.create
+call super::create
+this.text = "-"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_11.destroy
+call super::destroy
+end on
+
+type m_jiratickets from menu within m_auswertung
+end type
+
+event clicked;w_auswertung_edv lw_auswertung
+w_taetigkeiten_basis lw_parent
+s_auswert lstr_auswert
+
+lw_parent = ParentWindow
+lstr_auswert.is_title = "Auswertung JIRA-Tickets"
+lstr_auswert.is_tag = 'd_auswert_jira'
+lstr_auswert.is_datawindow = 'd_auswahl_jira'
+lstr_auswert.is_username = gs_username
+lstr_auswert.is_kst = "%"
+
+OpenWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+on m_jiratickets.create
+call super::create
+this.text = "&JIRA-Tickets..."
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_jiratickets.destroy
+call super::destroy
+end on
+
+type m_3 from menu within m_auswertung
+end type
+
+on m_3.create
+call super::create
+this.text = "-"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_3.destroy
+call super::destroy
+end on
+
+type m_tabsystems from menu within m_auswertung
+m_ts_gesamt m_ts_gesamt
+m_ts_mitarbeiter m_ts_mitarbeiter
+m_111 m_111
+m_ts_projekt_zeit m_ts_projekt_zeit
+m_ts_projekt_phase m_ts_projekt_phase
+end type
+
+on m_tabsystems.create
+call super::create
+this.text = "TAB &Systems"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+this.m_ts_gesamt=create m_ts_gesamt
+this.m_ts_mitarbeiter=create m_ts_mitarbeiter
+this.m_111=create m_111
+this.m_ts_projekt_zeit=create m_ts_projekt_zeit
+this.m_ts_projekt_phase=create m_ts_projekt_phase
+this.Item[UpperBound(this.Item)+1]=this.m_ts_gesamt
+this.Item[UpperBound(this.Item)+1]=this.m_ts_mitarbeiter
+this.Item[UpperBound(this.Item)+1]=this.m_111
+this.Item[UpperBound(this.Item)+1]=this.m_ts_projekt_zeit
+this.Item[UpperBound(this.Item)+1]=this.m_ts_projekt_phase
+end on
+
+on m_tabsystems.destroy
+call super::destroy
+destroy(this.m_ts_gesamt)
+destroy(this.m_ts_mitarbeiter)
+destroy(this.m_111)
+destroy(this.m_ts_projekt_zeit)
+destroy(this.m_ts_projekt_phase)
+end on
+
+type m_ts_gesamt from menu within m_tabsystems
+end type
+
+on m_ts_gesamt.create
+call super::create
+this.text = "&Gesamt..."
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_ts_gesamt.destroy
+call super::destroy
+end on
+
+event clicked;w_auswertung_edv lw_auswertung
+w_taetigkeiten_basis lw_parent
+s_auswert lstr_auswert
+
+lw_parent = ParentWindow
+lstr_auswert.is_title = "Auswertung TAB Systems Gesamt"
+lstr_auswert.is_datawindow = 'd_auswert_ts_gesamt'
+lw_parent.of_GetZeitraum (lstr_auswert.id_von, lstr_auswert.id_bis)
+lstr_auswert.is_username = gs_username
+
+OpenWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+type m_ts_mitarbeiter from menu within m_tabsystems
+end type
+
+on m_ts_mitarbeiter.create
+call super::create
+this.text = "nach &Mitarbeitern..."
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_ts_mitarbeiter.destroy
+call super::destroy
+end on
+
+event clicked;w_auswertung_edv lw_auswertung
+w_taetigkeiten_basis lw_parent
+s_auswert lstr_auswert
+
+lw_parent = ParentWindow
+lstr_auswert.is_title = "Auswertung TAB Systems Gesamt nach Mitarbeitern"
+lstr_auswert.is_datawindow = 'd_auswert_ts_gesamt_ma'
+lw_parent.of_GetZeitraum (lstr_auswert.id_von, lstr_auswert.id_bis)
+lstr_auswert.is_username = gs_username
+
+OpenWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+type m_111 from menu within m_tabsystems
+end type
+
+on m_111.create
+call super::create
+this.text = "-"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_111.destroy
+call super::destroy
+end on
+
+type m_ts_projekt_zeit from menu within m_tabsystems
+end type
+
+event clicked;w_auswertung_edv lw_auswertung
+s_auswert lstr_auswert
+
+lstr_auswert.is_title = "Auswertung TAB Systems Projekt nach Zeitrahmen"
+lstr_auswert.is_tag = 'd_auswert_projekt'
+lstr_auswert.is_datawindow = 'd_auswahl_ts_projekt'
+lstr_auswert.is_username = gs_username
+lstr_auswert.id_von = 1900-01-01
+lstr_auswert.id_bis = 2100-12-31
+
+openWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+on m_ts_projekt_zeit.create
+call super::create
+this.text = "Projekt nach &Zeitraum...~tCtrl+9"
+this.shortcut = 313
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_ts_projekt_zeit.destroy
+call super::destroy
+end on
+
+type m_ts_projekt_phase from menu within m_tabsystems
+end type
+
+event clicked;w_auswertung_edv lw_auswertung
+s_auswert lstr_auswert
+
+lstr_auswert.is_title = "Auswertung TAB Systems Projekt nach Phasen"
+lstr_auswert.is_tag = 'd_auswert_projekt_phase'
+lstr_auswert.is_datawindow = 'd_auswahl_ts_projekt'
+lstr_auswert.is_username = gs_username
+lstr_auswert.id_von = 1900-01-01
+lstr_auswert.id_bis = 2100-12-31
+
+openWithParm (lw_auswertung, lstr_auswert)
+
+end event
+
+on m_ts_projekt_phase.create
+call super::create
+this.text = "Projekt nach &Phasen...~tCtrl+0"
+this.shortcut = 304
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_ts_projekt_phase.destroy
+call super::destroy
+end on
+
+type m_1 from menu within m_file
+end type
+
+on m_1.create
+call super::create
+this.text = "-"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_1.destroy
+call super::destroy
+end on
+
+type m_export from menu within m_file
+end type
+
+on m_export.create
+call super::create
+this.text = "&Export..."
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_export.destroy
+call super::destroy
+end on
+
+event clicked;//*-----------------------------------------------------------------*/
+//*    clicked:  Print Window
+//*-----------------------------------------------------------------*/
+window lw_main
+
+/*  Print window  */
+lw_main = ParentWindow
+If IsValid ( lw_main ) Then
+	lw_main.TriggerEvent ("dfscl_export")
+End If
+end event
+
+type m_0 from menu within m_file
+end type
+
+on m_0.create
+call super::create
+this.text = "-"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_0.destroy
+call super::destroy
+end on
+
+type m_print from menu within m_file
+end type
+
+event clicked;//*-----------------------------------------------------------------*/
+//*    clicked:  Print Window
+//*-----------------------------------------------------------------*/
+window lw_main
+
+/*  Print window  */
+lw_main = ParentWindow
+If IsValid ( lw_main ) Then
+	lw_main.TriggerEvent ("dfscl_print")
+End If
+end event
+
+on m_print.create
+call super::create
+this.text = "&Drucken~tCtrl+P"
+this.shortcut = 336
+this.toolbaritemname = "print!"
+this.toolbaritemtext = "Drucken"
+this.menuimage = "print!"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_print.destroy
+call super::destroy
+end on
+
+type m_printersetup from menu within m_file
+end type
+
+event clicked;//*-----------------------------------------------------------------*/
+//*    clicked:  Open Print Setup Dialog
+//*-----------------------------------------------------------------*/
+PrintSetup ( )
+end event
+
+on m_printersetup.create
+call super::create
+this.text = "Drucker &einrichten..."
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_printersetup.destroy
+call super::destroy
+end on
+
+type m_dash1 from menu within m_file
+end type
+
+on m_dash1.create
+call super::create
+this.text = "-"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_dash1.destroy
+call super::destroy
+end on
+
+type m_exit from menu within m_file
+end type
+
+event clicked;//*-----------------------------------------------------------------*/
+//*    clicked:  Close Main Window
+//*-----------------------------------------------------------------*/
+Close ( ParentWindow )
+end event
+
+on m_exit.create
+call super::create
+this.text = "S&chließen"
+this.toolbaritemname = "exit!"
+this.toolbaritemtext = "Ende"
+this.toolbaritemspace = 2
+this.menuitemtype = menuitemtypeexit!
+this.menuimage = "exit!"
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_exit.destroy
+call super::destroy
+end on
+
+type m_help from menu within m_taetigkeiten_edv
+m_aboutquickapp m_aboutquickapp
+end type
+
+on m_help.create
+call super::create
+this.text = "&Hilfe"
+this.shifttoright = true
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+this.m_aboutquickapp=create m_aboutquickapp
+this.Item[UpperBound(this.Item)+1]=this.m_aboutquickapp
+end on
+
+on m_help.destroy
+call super::destroy
+destroy(this.m_aboutquickapp)
+end on
+
+type m_aboutquickapp from menu within m_help
+end type
+
+event clicked;//*-----------------------------------------------------------------*/
+//*    clicked:   Invoke copyright response window 
+//*-----------------------------------------------------------------*/
+Open ( w_about )
+end event
+
+on m_aboutquickapp.create
+call super::create
+this.text = "&Über..."
+this.menuitemtype = menuitemtypeabout!
+this.menustyle = contemporarymenu!
+this.menutextcolor = 134217735
+this.menubackcolor = 29347791
+this.menuhighlightcolor = 134217741
+this.textsize = -9
+this.weight = 400
+this.facename = "Tahoma"
+this.titlebackcolor = 134217730
+this.bitmapbackcolor = 12632256
+this.menubitmaps = true
+this.titlegradient = true
+this.toolbarstyle = contemporarytoolbar!
+this.toolbartextcolor = 134217746
+this.toolbarbackcolor = 29347791
+this.toolbarhighlightcolor = 134217741
+this.toolbargradient = true
+this.bitmapgradient = true
+end on
+
+on m_aboutquickapp.destroy
+call super::destroy
+end on
+

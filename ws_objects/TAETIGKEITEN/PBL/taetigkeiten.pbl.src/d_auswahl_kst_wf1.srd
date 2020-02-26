@@ -1,0 +1,95 @@
+﻿$PBExportHeader$d_auswahl_kst_wf1.srd
+$PBExportComments$Auswahl einer KST WF1
+release 19;
+datawindow(units=0 timer_interval=0 color=16777215 brushmode=0 transparency=0 gradient.angle=0 gradient.color=8421504 gradient.focus=0 gradient.repetition.count=0 gradient.repetition.length=100 gradient.repetition.mode=0 gradient.scale=100 gradient.spread=100 gradient.transparency=0 picture.blur=0 picture.clip.bottom=0 picture.clip.left=0 picture.clip.right=0 picture.clip.top=0 picture.mode=0 picture.scale.x=100 picture.scale.y=100 picture.transparency=0 processing=0 HTMLDW=no print.printername="" print.documentname="" print.orientation = 0 print.margin.left = 110 print.margin.right = 110 print.margin.top = 96 print.margin.bottom = 96 print.paper.source = 0 print.paper.size = 0 print.canusedefaultprinter=yes print.prompt=no print.buttons=no print.preview.buttons=no print.cliptext=no print.overrideprintjob=no print.collate=yes print.background=no print.preview.background=no print.preview.outline=yes hidegrayline=no showbackcoloronxp=no picture.file="" )
+header(height=0 color="536870912" transparency="0" gradient.color="8421504" gradient.transparency="0" gradient.angle="0" brushmode="0" gradient.repetition.mode="0" gradient.repetition.count="0" gradient.repetition.length="100" gradient.focus="0" gradient.scale="100" gradient.spread="100" )
+summary(height=0 color="536870912" transparency="0" gradient.color="8421504" gradient.transparency="0" gradient.angle="0" brushmode="0" gradient.repetition.mode="0" gradient.repetition.count="0" gradient.repetition.length="100" gradient.focus="0" gradient.scale="100" gradient.spread="100" )
+footer(height=0 color="536870912" transparency="0" gradient.color="8421504" gradient.transparency="0" gradient.angle="0" brushmode="0" gradient.repetition.mode="0" gradient.repetition.count="0" gradient.repetition.length="100" gradient.focus="0" gradient.scale="100" gradient.spread="100" )
+detail(height=64 color="536870912" transparency="0" gradient.color="8421504" gradient.transparency="0" gradient.angle="0" brushmode="0" gradient.repetition.mode="0" gradient.repetition.count="0" gradient.repetition.length="100" gradient.focus="0" gradient.scale="100" gradient.spread="100" )
+table(column=(type=char(1) updatewhereclause=yes name=schluessel dbname="umlage.schluessel" )
+ column=(type=char(20) updatewhereclause=yes name=umlage dbname="umlage.umlage" )
+ column=(type=char(60) updatewhereclause=yes name=lang dbname="umlage.lang" )
+ column=(type=char(13) updatewhereclause=yes name=sort dbname="sort" )
+ retrieve="select schluessel, umlage, lang, (select min (u2.umlage) 
+											from intdba.umlage u2, intdba.katalog
+											where u2.schluessel = 'k'
+											and kat_typ = 'WF1_KST*'
+											and REGEXP_LIKE (u2.umlage, kat_key)
+											and REGEXP_LIKE (umlage.umlage, kat_key)
+											and (u2.umlage like '3%' or u2.umlage like '8%')
+											and (module like '%WF1%' or module is null)
+											and katalog.~"ORDER~" = (SELECT MAX (~"ORDER~")
+																			FROM intdba.umlage u3, intdba.katalog
+																			WHERE u3.schluessel = 'k'
+																			and kat_typ = 'WF1_KST*'
+																			and REGEXP_LIKE (u3.umlage, kat_key)
+																			and REGEXP_LIKE (umlage.umlage, kat_key)
+																			and (u3.umlage like '3%' or u3.umlage like '8%')
+																			and (module like '%WF1%' or module is null)
+																			and (1=1))
+											and (1=1)) as sort
+from intdba.umlage
+where schluessel = 'k'
+and von = (SELECT max (k2.von)
+					from intdba.umlage k2
+					where k2.schluessel = 'k'
+					and k2.umlage = umlage.umlage)
+and umlage in (select umlage
+					from intdba.umlage
+					where schluessel = 'k'
+					and (umlage like '3%' or umlage like '8%')
+					and (module like '%WF1%' or module is null)
+					and (1=1)
+					)
+and exists (select 1 from intdba.org_recht
+				where username = '%USERNAME%'
+				and art = 'TK_KST'
+				and REGEXP_LIKE (umlage.umlage, recht))
+UNION ALL
+select '*', kat_key, kat_value, (select min (umlage) from intdba.umlage
+											where schluessel = 'k'
+											and REGEXP_LIKE (umlage, kat_key)
+											and (umlage like '3%' or umlage like '8%')
+											and (module like '%WF1%' or module is null)
+											and (1=1)
+											and exists (select 1 from intdba.org_recht
+															where username = '%USERNAME%'
+															and art = 'TK_KST'
+															and REGEXP_LIKE (umlage.umlage, recht)))
+from intdba.katalog
+where kat_typ = 'WF1_KST*'
+and exists (select 1 from intdba.umlage
+				where schluessel = 'k'
+				and REGEXP_LIKE (umlage, kat_key)
+				and (umlage like '3%' or umlage like '8%')
+				and (module like '%WF1%' or module is null)
+				and (1=1)
+				and exists (select 1 from intdba.org_recht
+								where username = '%USERNAME%'
+								and art = 'TK_KST'
+								and REGEXP_LIKE (umlage.umlage, recht))
+				)
+and not exists (select 1 from intdba.umlage
+					where schluessel = 'k'
+					and REGEXP_LIKE (umlage, kat_key)
+					and (umlage like '3%' or umlage like '8%')
+					and (module like '%WF1%' or module is null)
+					and (1=1)
+					and not exists (select 1 from intdba.org_recht
+										where username = '%USERNAME%'
+										and art = 'TK_KST'
+										and REGEXP_LIKE (umlage.umlage, recht))
+					)
+"  sort="sort A umlage A schluessel A " )
+compute(band=detail alignment="0" expression="if (schluessel = '*', if (umlage IN ('^3.*',  '^8.*'), '', '   '), '      ' + umlage +  '  ') + lang"border="0" color="33554432" x="18" y="0" height="60" width="1541" format="[GENERAL]" html.valueishtml="0"  name=anzeige visible="1"  font.face="Segoe UI" font.height="-9" font.weight="400~tif (schluessel = '*', 700, 400)"  font.family="2" font.pitch="2" font.charset="1" background.mode="1" background.color="536870912" background.transparency="0" background.gradient.color="8421504" background.gradient.transparency="0" background.gradient.angle="0" background.brushmode="0" background.gradient.repetition.mode="0" background.gradient.repetition.count="0" background.gradient.repetition.length="100" background.gradient.focus="0" background.gradient.scale="100" background.gradient.spread="100" tooltip.backcolor="134217752" tooltip.delay.initial="0" tooltip.delay.visible="32000" tooltip.enabled="0" tooltip.hasclosebutton="0" tooltip.icon="0" tooltip.isbubble="0" tooltip.maxwidth="0" tooltip.textcolor="134217751" tooltip.transparency="0" transparency="0" )
+htmltable(border="1" )
+htmlgen(clientevents="1" clientvalidation="1" clientcomputedfields="1" clientformatting="0" clientscriptable="0" generatejavascript="1" encodeselflinkargs="1" netscapelayers="0" pagingmethod=0 generatedddwframes="1" )
+xhtmlgen() cssgen(sessionspecific="0" )
+xmlgen(inline="0" )
+xsltgen()
+jsgen()
+export.xml(headgroups="1" includewhitespace="0" metadatatype=0 savemetadata=0 )
+import.xml()
+export.pdf(method=0 distill.custompostscript="0" xslfop.print="0" nativepdf.customsize=0 nativepdf.customorientation=0 nativepdf.pdfstandard=0 nativepdf.useprintspec=no )
+export.xhtml()
+ 

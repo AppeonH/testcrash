@@ -1,0 +1,14 @@
+﻿$PBExportHeader$s_auswert.srs
+$PBExportComments$Struktur für Übergabe Auswertungsdaten
+global type s_auswert from structure
+	date		id_von
+	date		id_bis
+	string		is_username
+	string		is_datawindow
+	string		is_tag
+	string		is_title
+	string		is_kst
+	string		is_projekt
+	string		is_schluessel
+end type
+

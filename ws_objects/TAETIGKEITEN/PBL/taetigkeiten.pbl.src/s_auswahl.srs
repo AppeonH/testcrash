@@ -1,0 +1,7 @@
+﻿$PBExportHeader$s_auswahl.srs
+$PBExportComments$Struktur für Übergabe Daten aus Auswahl-Dialog
+global type s_auswahl from structure
+	string		dataobject
+	string		return_column
+end type
+

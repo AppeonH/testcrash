@@ -1,0 +1,62 @@
+﻿$PBExportHeader$d_dddw_jira.srd
+$PBExportComments$DDDW JIRA-Tickets
+release 19;
+datawindow(units=0 timer_interval=0 color=15793151 brushmode=0 transparency=0 gradient.angle=0 gradient.color=8421504 gradient.focus=0 gradient.repetition.count=0 gradient.repetition.length=100 gradient.repetition.mode=0 gradient.scale=100 gradient.spread=100 gradient.transparency=0 picture.blur=0 picture.clip.bottom=0 picture.clip.left=0 picture.clip.right=0 picture.clip.top=0 picture.mode=0 picture.scale.x=100 picture.scale.y=100 picture.transparency=0 processing=0 HTMLDW=no print.printername="" print.documentname="" print.orientation = 0 print.margin.left = 110 print.margin.right = 110 print.margin.top = 96 print.margin.bottom = 96 print.paper.source = 0 print.paper.size = 0 print.canusedefaultprinter=yes print.prompt=no print.buttons=no print.preview.buttons=no print.cliptext=no print.overrideprintjob=no print.collate=yes print.background=no print.preview.background=no print.preview.outline=yes hidegrayline=yes showbackcoloronxp=no picture.file="" )
+header(height=0 color="536870912" transparency="0" gradient.color="8421504" gradient.transparency="0" gradient.angle="0" brushmode="0" gradient.repetition.mode="0" gradient.repetition.count="0" gradient.repetition.length="100" gradient.focus="0" gradient.scale="100" gradient.spread="100" )
+summary(height=0 color="536870912" transparency="0" gradient.color="8421504" gradient.transparency="0" gradient.angle="0" brushmode="0" gradient.repetition.mode="0" gradient.repetition.count="0" gradient.repetition.length="100" gradient.focus="0" gradient.scale="100" gradient.spread="100" )
+footer(height=0 color="536870912" transparency="0" gradient.color="8421504" gradient.transparency="0" gradient.angle="0" brushmode="0" gradient.repetition.mode="0" gradient.repetition.count="0" gradient.repetition.length="100" gradient.focus="0" gradient.scale="100" gradient.spread="100" )
+detail(height=64 color="536870912" transparency="0" gradient.color="8421504" gradient.transparency="0" gradient.angle="0" brushmode="0" gradient.repetition.mode="0" gradient.repetition.count="0" gradient.repetition.length="100" gradient.focus="0" gradient.scale="100" gradient.spread="100" )
+table(column=(type=datetime updatewhereclause=yes name=updated dbname="jira$issue.updated" )
+ column=(type=char(255) updatewhereclause=yes name=summary dbname="jira$issue.summary" )
+ column=(type=char(296) updatewhereclause=yes name=ticket dbname="jira$issue.ticket" )
+ column=(type=decimal(0) updatewhereclause=yes name=issueid dbname="jira$issue.issueid" )
+ column=(type=decimal(0) updatewhereclause=yes name=issuenum dbname="jira$issue.issuenum" )
+ column=(type=char(60) updatewhereclause=yes name=statusname dbname="jira$issue.statusname" )
+ column=(type=char(1) updatewhereclause=yes name=kz_erledigt dbname="kz_erledigt" )
+ column=(type=char(1) updatewhereclause=yes name=kz_user_ticket dbname="kz_user_ticket" values="Tickets mit meiner Beteiligung in JIRA	X/Tickets ohne meine Beteiligung in JIRA	 /" )
+ column=(type=char(1) updatewhereclause=yes name=schluessel dbname="schluessel" )
+ column=(type=char(255) updatewhereclause=yes name=umlage dbname="umlage" )
+ retrieve="SELECT ~"JIRA$ISSUE~".~"UPDATED~",   
+		~"JIRA$ISSUE~".~"SUMMARY~",   
+		~"JIRA$ISSUE~".~"TICKET~",
+		~"JIRA$ISSUE~".~"ISSUEID~",
+		~"JIRA$ISSUE~".~"ISSUENUM~",
+		~"JIRA$ISSUE~".~"STATUSNAME~",
+		CASE WHEN UPPER (~"JIRA$ISSUE~".~"STATUSNAME~") IN ('PRODUKTIV', 'VERWORFEN') THEN 'X' ELSE ' ' END AS KZ_ERLEDIGT,
+		CASE WHEN EXISTS (SELECT 1 
+									FROM ~"INTDBA~".~"JIRA$ISSUE_USERS~"
+									WHERE ~"JIRA$ISSUE_USERS~".~"ISSUEID~" = ~"JIRA$ISSUE~".~"ISSUEID~"
+									   AND ~"JIRA$ISSUE_USERS~".~"USERNAME~" = :username) 
+                 THEN 'X'  ELSE ' ' END AS KZ_USER_TICKET,
+		(SELECT LOWER (SUBSTR (~"VALUE~", 1, 1))
+		 FROM ~"INTDBA~".~"JIRA$ISSUE_FIELDS~"
+		 WHERE ~"JIRA$ISSUE_FIELDS~".~"ISSUEID~" = ~"JIRA$ISSUE~".~"ISSUEID~"
+		   AND ~"JIRA$ISSUE_FIELDS~".~"FIELDNAME~" = 'Kostenstelle'
+		   AND ~"JIRA$ISSUE_FIELDS~".~"PARENTOPTIONID~" IS NULL) AS SCHLUESSEL,
+		(SELECT ~"VALUE~"
+		 FROM ~"INTDBA~".~"JIRA$ISSUE_FIELDS~"
+		 WHERE ~"JIRA$ISSUE_FIELDS~".~"ISSUEID~" = ~"JIRA$ISSUE~".~"ISSUEID~"
+		   AND ~"JIRA$ISSUE_FIELDS~".~"FIELDNAME~" = 'Kostenstelle'
+		   AND ~"JIRA$ISSUE_FIELDS~".~"PARENTOPTIONID~" IS NOT NULL) AS UMLAGE
+FROM ~"INTDBA~".~"JIRA$ISSUE~"  
+WHERE ~"JIRA$ISSUE~".~"PKEY~" = 'EDV'
+  AND (:extended = 'X'
+  	OR UPPER (~"JIRA$ISSUE~".~"STATUSNAME~") IN ('IN UMSETZUNG', 'ABNAHME ENTWICKLUNG', 'IN TEST', 'ABNAHME FACHBEREICH', 'BEREIT FÜR PRODUKTIVSTELLUNG', 'LIVESTELLUNG', 'LIVEKONTROLLE', 'PRODUKTIV', 'VERWORFEN')
+		)
+  AND NVL (~"JIRA$ISSUE~".~"ISSUETYPESTYLE~", ' ') <> 'jira_subtask'
+" filter=" kz_erledigt <> 'X' or (updated >= relativedate(today(), -8 ))"arguments=(("username", string),("extended", string))  sort="kz_user_ticket D issuenum D " )
+group(level=1 header.height=72 trailer.height=0 by=("kz_user_ticket" ) header.suppress=yes header.color="536870912" header.transparency="0" header.gradient.color="8421504" header.gradient.transparency="0" header.gradient.angle="0" header.brushmode="0" header.gradient.repetition.mode="0" header.gradient.repetition.count="0" header.gradient.repetition.length="100" header.gradient.focus="0" header.gradient.scale="100" header.gradient.spread="100" trailer.color="536870912" trailer.transparency="0" trailer.gradient.color="8421504" trailer.gradient.transparency="0" trailer.gradient.angle="0" trailer.brushmode="0" trailer.gradient.repetition.mode="0" trailer.gradient.repetition.count="0" trailer.gradient.repetition.length="100" trailer.gradient.focus="0" trailer.gradient.scale="100" trailer.gradient.spread="100" )
+column(band=header.1 id=8 alignment="0" tabsequence=32766 border="0" color="255" x="18" y="8" height="68" width="1769" format="[general]" html.valueishtml="0"  name=kz_user_ticket visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.codetable=yes  font.face="Segoe UI" font.height="-9" font.weight="700"  font.family="2" font.pitch="2" font.charset="0" background.mode="1" background.color="536870912" background.transparency="0" background.gradient.color="8421504" background.gradient.transparency="0" background.gradient.angle="0" background.brushmode="0" background.gradient.repetition.mode="0" background.gradient.repetition.count="0" background.gradient.repetition.length="100" background.gradient.focus="0" background.gradient.scale="100" background.gradient.spread="100" tooltip.backcolor="134217752" tooltip.delay.initial="0" tooltip.delay.visible="32000" tooltip.enabled="0" tooltip.hasclosebutton="0" tooltip.icon="0" tooltip.isbubble="0" tooltip.maxwidth="0" tooltip.textcolor="134217751" tooltip.transparency="0" transparency="0" )
+column(band=detail id=3 alignment="0" tabsequence=32766 border="0" color="33554432" x="18" y="0" height="60" width="370" format="[general]" html.valueishtml="0"  name=ticket visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no  font.face="Segoe UI" font.height="-9" font.weight="400"  font.family="2" font.pitch="2" font.charset="0" background.mode="1" background.color="536870912" background.transparency="0" background.gradient.color="8421504" background.gradient.transparency="0" background.gradient.angle="0" background.brushmode="0" background.gradient.repetition.mode="0" background.gradient.repetition.count="0" background.gradient.repetition.length="100" background.gradient.focus="0" background.gradient.scale="100" background.gradient.spread="100" tooltip.backcolor="134217752" tooltip.delay.initial="0" tooltip.delay.visible="32000" tooltip.enabled="0" tooltip.hasclosebutton="0" tooltip.icon="0" tooltip.isbubble="0" tooltip.maxwidth="0" tooltip.textcolor="134217751" tooltip.transparency="0" transparency="0" )
+column(band=detail id=2 alignment="0" tabsequence=32766 border="0" color="33554432" x="411" y="0" height="60" width="2907" format="[general]" html.valueishtml="0"  name=summary visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.useellipsis=yes  font.face="Segoe UI" font.height="-9" font.weight="400"  font.family="2" font.pitch="2" font.charset="0" background.mode="1" background.color="536870912" background.transparency="0" background.gradient.color="8421504" background.gradient.transparency="0" background.gradient.angle="0" background.brushmode="0" background.gradient.repetition.mode="0" background.gradient.repetition.count="0" background.gradient.repetition.length="100" background.gradient.focus="0" background.gradient.scale="100" background.gradient.spread="100" tooltip.backcolor="134217752" tooltip.delay.initial="0" tooltip.delay.visible="32000" tooltip.enabled="0" tooltip.hasclosebutton="0" tooltip.icon="0" tooltip.isbubble="0" tooltip.maxwidth="0" tooltip.textcolor="134217751" tooltip.transparency="0" transparency="0" )
+htmltable(border="1" )
+htmlgen(clientevents="1" clientvalidation="1" clientcomputedfields="1" clientformatting="0" clientscriptable="0" generatejavascript="1" encodeselflinkargs="1" netscapelayers="0" pagingmethod=0 generatedddwframes="1" )
+xhtmlgen() cssgen(sessionspecific="0" )
+xmlgen(inline="0" )
+xsltgen()
+jsgen()
+export.xml(headgroups="1" includewhitespace="0" metadatatype=0 savemetadata=0 )
+import.xml()
+export.pdf(method=0 distill.custompostscript="0" xslfop.print="0" nativepdf.customsize=0 nativepdf.customorientation=0 nativepdf.pdfstandard=0 nativepdf.useprintspec=no )
+export.xhtml()
+ 

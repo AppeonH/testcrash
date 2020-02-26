@@ -1,0 +1,2 @@
+﻿$PBExportHeader$q_test.srq
+PBSELECT( VERSION(400) TABLE(NAME="customer" ) COLUMN(NAME="customer.id") COLUMN(NAME="customer.fname") COLUMN(NAME="customer.lname") COLUMN(NAME="customer.address") COLUMN(NAME="customer.city") COLUMN(NAME="customer.state") COLUMN(NAME="customer.zip") COLUMN(NAME="customer.phone") COLUMN(NAME="customer.company_name")) 

@@ -1,0 +1,26 @@
+﻿$PBExportHeader$p_taetigkeiten.srj
+$PBExportComments$Application Executable Project
+EXE:taetigkeiten.exe,taetigkeiten.pbr,0,1,1
+CMP:0,0,0,2,0,0,1
+COM:Thüringer Aufbaubank
+DES:Zeiterfassung
+CPY:Thüringer Aufbaubank
+PRD:Zeiterfassung
+PVS:14.2.0.0
+PVN:14,2,0,0
+FVS:14.2.0.0
+FVN:14,2,0,0
+MAN:0,asInvoker,0
+PBD:taetigkeiten.pbl,,1
+PBD:zeitdaten_ws.pbl,,1
+OBJ:D:\Entwicklung\Taetigkeiten.GIT\taetigkeiten\pbl\taetigkeiten.pbl,n_cst_thread_srv,u
+OBJ:D:\Entwicklung\Taetigkeiten.GIT\taetigkeiten\pbl\taetigkeiten.pbl,taetigkeiten,a
+OBJ:D:\Entwicklung\Taetigkeiten.GIT\taetigkeiten\pbl\taetigkeiten.pbl,n_cst_crypt,u
+OBJ:D:\Entwicklung\Taetigkeiten.GIT\taetigkeiten\pbl\taetigkeiten.pbl,dfscl_n_cst_thread_srv,u
+OBJ:D:\Entwicklung\Taetigkeiten.GIT\taetigkeiten\pbl\taetigkeiten.pbl,dfscl_n_cst_crypt,u
+OBJ:D:\Entwicklung\Taetigkeiten.GIT\taetigkeiten\pbl\taetigkeiten.pbl,n_cst_random,u
+OBJ:D:\Entwicklung\Taetigkeiten.GIT\taetigkeiten\pbl\taetigkeiten.pbl,n_cst_thread_handler,u
+OBJ:D:\Entwicklung\Taetigkeiten.GIT\taetigkeiten\pbl\taetigkeiten.pbl,w_idle,w
+OBJ:D:\Entwicklung\Taetigkeiten.GIT\taetigkeiten\pbl\taetigkeiten.pbl,n_taetigkeiten_connectservice,u
+OBJ:D:\Entwicklung\Taetigkeiten.GIT\taetigkeiten\pbl\taetigkeiten.pbl,dfscl_n_cst_random,u
+OBJ:D:\Entwicklung\Taetigkeiten.GIT\taetigkeiten\pbl\taetigkeiten.pbl,dfscl_n_cst_thread_handler,u

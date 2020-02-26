@@ -1,0 +1,8 @@
+Save Format v3.0(19990112)
+@begin Unchecked
+@end;
+@begin Targets
+ 0 "taetigkeiten\\pbl\\taetigkeiten.pbt";
+@end;
+DefaultTarget "taetigkeiten\\pbl\\taetigkeiten.pbt";
+DefaultRemoteTarget "taetigkeiten\\pbl\\taetigkeiten.pbt";
